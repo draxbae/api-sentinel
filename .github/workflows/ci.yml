@@ -38,23 +38,23 @@ jobs:
       - name: Wait for APIs
         run: |
           python - <<'PY'
+          import socket
           import time
-          import urllib.request
 
-          targets = [
-              "http://127.0.0.1:8000",
-              "http://127.0.0.1:8001",
-          ]
+          targets = [8000, 8001]
 
-          for target in targets:
+          for port in targets:
               for attempt in range(30):
                   try:
-                      urllib.request.urlopen(target, timeout=1)
+                      with socket.create_connection(
+                          ("127.0.0.1", port), timeout=1
+                      ):
+                          print(f"API pada port {port} siap.")
                       break
-                  except Exception:
+                  except OSError:
                       time.sleep(1)
               else:
-                  raise SystemExit(f"API tidak siap: {target}")
+                  raise SystemExit(f"API tidak siap pada port {port}")
 
           print("Kedua API lab siap.")
           PY
