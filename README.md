@@ -63,7 +63,7 @@ Install dependencies inside your virtual environment:
 ```bash
 cd ~/api-sentinel
 source .venv/bin/activate
-pip install httpx PyYAML
+pip install -r requirements.txt
 ```
 
 ## Run the Local Lab
@@ -165,7 +165,8 @@ The repository includes a GitHub Actions workflow for automated checks.
 
 - Repository: https://github.com/draxbae/api-sentinel
 - GitHub Actions: https://github.com/draxbae/api-sentinel/actions
-- Release v0.8.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.8.0
+- Latest release v0.9.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.9.0
+- Previous release v0.8.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.8.0
 
 ## Security Recommendations
 
