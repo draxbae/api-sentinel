@@ -37,6 +37,8 @@ api-sentinel/
 │   ├── security_report_v0.7.0.json
 │   ├── security_report_v0.8.0.html
 │   ├── security_report_v0.8.0.md
+│   ├── security_report_v0.9.0.html
+│   ├── security_report_v0.9.0.md
 │   └── spec_audit.json
 ├── src/
 │   ├── bola_test.py
@@ -134,14 +136,16 @@ The `reports/` directory contains structured test results and generated reports:
 | `bola_report.json` | BOLA report data |
 | `http_check.json` | HTTP check results |
 | `security_report_v0.7.0.json` | Security report data for version 0.7.0 |
-| `security_report_v0.8.0.md` | Human-readable Markdown security report |
-| `security_report_v0.8.0.html` | HTML security report |
+| `security_report_v0.8.0.md` | Historical Markdown security report for v0.8.0 |
+| `security_report_v0.9.0.md` | Current Markdown security report for v0.9.0 |
+| `security_report_v0.8.0.html` | Historical HTML security report for v0.8.0 |
+| `security_report_v0.9.0.html` | Current HTML security report for v0.9.0 |
 | `spec_audit.json` | OpenAPI specification audit results |
 
 Open the HTML report in a browser:
 
 ```bash
-firefox reports/security_report_v0.8.0.html
+firefox reports/security_report_v0.9.0.html
 ```
 
 Report contents depend on the latest test results generated locally. Regenerate reports after running tests if you need updated results.

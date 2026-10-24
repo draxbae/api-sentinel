@@ -4,8 +4,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-SOURCE = Path("reports/bola_comparison_v0.8.0.json")
-OUTPUT = Path("reports/security_report_v0.8.0.html")
+SOURCE = Path("reports/bola_comparison.json")
+OUTPUT = Path("reports/security_report_v0.9.0.html")
 
 
 def esc(value):
@@ -88,7 +88,7 @@ th {{ background: #f3f5f8; }}
 <body>
 <header>
   <h1>API Sentinel</h1>
-  <p>Security Assessment Report · Version 0.8.0</p>
+  <p>Security Assessment Report · Version 0.9.0</p>
   <p>Generated: {esc(datetime.now(timezone.utc).isoformat())}</p>
   <p class="note">Scope: local BOLA/IDOR fixtures only.</p>
 </header>

@@ -79,6 +79,37 @@ jobs:
       - name: Generate HTML report
         run: python src/html_report.py
 
+      - name: Validate generated v0.9.0 reports
+        run: |
+          python - <<'PYREPORT'
+          import json
+          from pathlib import Path
+
+          comparison = json.loads(
+              Path("reports/bola_comparison.json").read_text(encoding="utf-8")
+          )
+          markdown = Path("reports/security_report_v0.9.0.md")
+          html = Path("reports/security_report_v0.9.0.html")
+
+          assert comparison.get("version") == "0.9.0", (
+              "Versi comparison report bukan 0.9.0"
+          )
+          assert markdown.is_file(), "Markdown report tidak dibuat"
+          assert html.is_file(), "HTML report tidak dibuat"
+
+          md_text = markdown.read_text(encoding="utf-8")
+          html_text = html.read_text(encoding="utf-8")
+
+          assert "**Versi:** 0.9.0" in md_text, (
+              "Versi di Markdown report salah"
+          )
+          assert "Version 0.9.0" in html_text, (
+              "Versi di HTML report salah"
+          )
+
+          print("PASS: kedua laporan v0.9.0 dibuat dan versinya benar.")
+          PYREPORT
+
       - name: Show API logs on failure
         if: failure()
         run: |
