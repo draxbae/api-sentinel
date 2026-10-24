@@ -37,8 +37,8 @@ api-sentinel/
 │   ├── security_report_v0.7.0.json
 │   ├── security_report_v0.8.0.html
 │   ├── security_report_v0.8.0.md
-│   ├── security_report_v0.9.0.html
-│   ├── security_report_v0.9.0.md
+│   ├── security_report_v1.0.0.html
+│   ├── security_report_v1.0.0.md
 │   └── spec_audit.json
 ├── src/
 │   ├── bola_test.py
@@ -112,7 +112,7 @@ python src/spec_audit.py
 
 ## Latest Lab Results
 
-API Sentinel v0.9.0 includes six BOLA test cases for each local fixture.
+API Sentinel v1.0.0 includes six BOLA test cases for each local fixture.
 
 - Secure fixture: six tests passed.
 - Vulnerable lab fixture: five tests passed and one intentional BOLA finding detected.
@@ -137,15 +137,15 @@ The `reports/` directory contains structured test results and generated reports:
 | `http_check.json` | HTTP check results |
 | `security_report_v0.7.0.json` | Security report data for version 0.7.0 |
 | `security_report_v0.8.0.md` | Historical Markdown security report for v0.8.0 |
-| `security_report_v0.9.0.md` | Current Markdown security report for v0.9.0 |
+| `security_report_v1.0.0.md` | Current Markdown security report for v1.0.0 |
 | `security_report_v0.8.0.html` | Historical HTML security report for v0.8.0 |
-| `security_report_v0.9.0.html` | Current HTML security report for v0.9.0 |
+| `security_report_v1.0.0.html` | Current HTML security report for v1.0.0 |
 | `spec_audit.json` | OpenAPI specification audit results |
 
 Open the HTML report in a browser:
 
 ```bash
-firefox reports/security_report_v0.9.0.html
+firefox reports/security_report_v1.0.0.html
 ```
 
 Report contents depend on the latest test results generated locally. Regenerate reports after running tests if you need updated results.
@@ -169,7 +169,7 @@ The repository includes a GitHub Actions workflow for automated checks.
 
 - Repository: https://github.com/draxbae/api-sentinel
 - GitHub Actions: https://github.com/draxbae/api-sentinel/actions
-- Latest release v0.9.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.9.0
+- Latest release v1.0.0: https://github.com/draxbae/api-sentinel/releases/tag/v1.0.0
 - Previous release v0.8.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.8.0
 
 ## Security Recommendations
@@ -194,6 +194,6 @@ Do not test systems without explicit permission.
 
 ## Current Version
 
-- Toolkit test version: 0.9.0
-- Documentation version: 0.9.0
+- Toolkit test version: 1.0.0
+- Documentation version: 1.0.0
 - Previous GitHub release: v0.8.0

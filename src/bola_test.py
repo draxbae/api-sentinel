@@ -172,7 +172,7 @@ def main():
 
     report = {
         "tool": "API Sentinel",
-        "version": "0.9.0",
+        "version": "1.0.0",
         "test_type": "Local BOLA/IDOR comparison lab",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "reports": reports,

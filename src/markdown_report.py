@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 SOURCE = Path("reports/bola_comparison.json")
-OUTPUT = Path("reports/security_report_v0.9.0.md")
+OUTPUT = Path("reports/security_report_v1.0.0.md")
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     lines = [
         "# API Sentinel — Security Assessment",
         "",
-        "**Versi:** 0.9.0",
+        "**Versi:** 1.0.0",
         f"**Dibuat:** {datetime.now(timezone.utc).isoformat()}",
         "**Cakupan:** Lab BOLA/IDOR lokal",
         "",

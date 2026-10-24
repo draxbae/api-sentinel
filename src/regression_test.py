@@ -31,7 +31,7 @@ def main():
         print(f"[FAIL] Gagal membaca report: {exc}")
         return 1
 
-    check("Report version 0.9.0", data.get("version") == "0.9.0")
+    check("Report version 1.0.0", data.get("version") == "1.0.0")
 
     reports = {
         entry.get("target"): entry
