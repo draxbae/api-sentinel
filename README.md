@@ -110,15 +110,17 @@ python src/spec_audit.py
 
 ## Latest Lab Results
 
-The documented local lab comparison contains eight test cases:
+API Sentinel v0.9.0 includes six BOLA test cases for each local fixture.
 
-- Secure fixture: four tests passed.
-- Vulnerable fixture: three tests passed and one potential BOLA/IDOR finding was detected.
-- Regression tests: four checks passed.
+- Secure fixture: six tests passed.
+- Vulnerable lab fixture: five tests passed and one intentional BOLA finding detected.
+- Regression tests: 19/19 checks passed in the latest local run.
 
-The potential finding occurs when Alice receives Bob's order data even though the expected HTTP status is `403`; the intentionally vulnerable lab returns `200`.
+The intentional finding occurs when Alice requests Bob's order. The secure fixture denies cross-owner access, while the vulnerable lab intentionally returns the order data.
 
-These results describe the local fixtures only. They do not establish a vulnerability in any production API.
+These results apply only to the controlled local fixtures. They do not establish a vulnerability in any production API.
+
+Test results and generated reports may change when the tests are run again.
 
 ## Reports
 
@@ -187,4 +189,6 @@ Do not test systems without explicit permission.
 
 ## Current Version
 
-**Documentation version:** 0.8.0
+- Toolkit test version: 0.9.0
+- Documentation version: 0.9.0
+- Previous GitHub release: v0.8.0
