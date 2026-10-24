@@ -9,12 +9,56 @@ TARGETS = [
     {
         "name": "secure",
         "url": "http://127.0.0.1:8000",
-        "expected_cross_owner": 403,
     },
     {
         "name": "vulnerable_lab",
         "url": "http://127.0.0.1:8001",
-        "expected_cross_owner": 403,
+    },
+]
+
+CASES = [
+    {
+        "name": "Alice reads own order",
+        "token": "alice-token",
+        "order_id": "1001",
+        "expected_status": 200,
+        "expected_item": "Laptop",
+    },
+    {
+        "name": "Alice reads Bob's order",
+        "token": "alice-token",
+        "order_id": "1002",
+        "expected_status": 403,
+        "expected_item": None,
+        "cross_owner": True,
+    },
+    {
+        "name": "Bob reads own order",
+        "token": "bob-token",
+        "order_id": "1002",
+        "expected_status": 200,
+        "expected_item": "Keyboard",
+    },
+    {
+        "name": "Unauthenticated request",
+        "token": None,
+        "order_id": "1001",
+        "expected_status": 401,
+        "expected_item": None,
+    },
+    {
+        "name": "Invalid token",
+        "token": "invalid-token",
+        "order_id": "1001",
+        "expected_status": 401,
+        "expected_item": None,
+    },
+    {
+        "name": "Nonexistent order",
+        "token": "alice-token",
+        "order_id": "9999",
+        "expected_status": 404,
+        "expected_item": None,
     },
 ]
 
@@ -23,41 +67,10 @@ def check_target(target):
     base_url = target["url"]
     results = []
 
-    cases = [
-        {
-            "name": "Alice reads own order",
-            "token": "alice-token",
-            "order_id": "1001",
-            "expected_status": 200,
-            "expected_item": "Laptop",
-        },
-        {
-            "name": "Alice reads Bob's order",
-            "token": "alice-token",
-            "order_id": "1002",
-            "expected_status": 403,
-            "expected_item": None,
-        },
-        {
-            "name": "Bob reads own order",
-            "token": "bob-token",
-            "order_id": "1002",
-            "expected_status": 200,
-            "expected_item": "Keyboard",
-        },
-        {
-            "name": "Unauthenticated request",
-            "token": None,
-            "order_id": "1001",
-            "expected_status": 401,
-            "expected_item": None,
-        },
-    ]
-
     with httpx.Client(timeout=5.0) as client:
-        for case in cases:
+        for case in CASES:
             headers = {}
-            if case["token"]:
+            if case["token"] is not None:
                 headers["Authorization"] = f"Bearer {case['token']}"
 
             try:
@@ -74,18 +87,31 @@ def check_target(target):
 
                 item = body.get("item")
 
-                if case["name"] == "Alice reads Bob's order":
+                if case.get("cross_owner"):
                     if status == 200 and item == "Keyboard":
-                        result = "FINDING"
+                        result = (
+                            "FINDING"
+                            if target["name"] == "vulnerable_lab"
+                            else "FAIL"
+                        )
                         detail = (
-                            "Alice received Bob's order data: "
-                            "potential BOLA in local lab."
+                            "Cross-owner data was exposed."
+                            if result == "FINDING"
+                            else "Secure API exposed another user's data."
                         )
                     elif status == 403:
-                        result = "PASS"
-                        detail = "Cross-owner access was denied."
+                        result = (
+                            "PASS"
+                            if target["name"] == "secure"
+                            else "REVIEW"
+                        )
+                        detail = (
+                            "Cross-owner access was denied."
+                            if result == "PASS"
+                            else "Lab behavior changed; investigate fixture."
+                        )
                     else:
-                        result = "REVIEW"
+                        result = "FAIL"
                         detail = "Unexpected cross-owner response."
                 else:
                     ok = status == case["expected_status"]
@@ -95,7 +121,11 @@ def check_target(target):
                     result = "PASS" if ok else "FAIL"
                     detail = (
                         "Response matched expectation."
-                        if ok else "Response differed from expectation."
+                        if ok
+                        else (
+                            f"Expected HTTP {case['expected_status']}; "
+                            f"received HTTP {status}."
+                        )
                     )
 
                 entry = {
@@ -118,7 +148,12 @@ def check_target(target):
                 }
 
             results.append(entry)
-            print(f"[{target['name']}] [{entry['result']}] {entry['test']}")
+            print(
+                f"[{target['name']}] "
+                f"[{entry['result']}] {entry['test']}"
+            )
+
+    statuses = ("PASS", "FINDING", "FAIL", "REVIEW", "ERROR")
 
     return {
         "target": target["name"],
@@ -126,7 +161,7 @@ def check_target(target):
         "total_tests": len(results),
         "counts": {
             status: sum(r["result"] == status for r in results)
-            for status in ("PASS", "FINDING", "FAIL", "REVIEW", "ERROR")
+            for status in statuses
         },
         "results": results,
     }
@@ -137,13 +172,14 @@ def main():
 
     report = {
         "tool": "API Sentinel",
-        "version": "0.6.0",
+        "version": "0.9.0",
         "test_type": "Local BOLA/IDOR comparison lab",
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "reports": reports,
         "note": (
             "Only local fixtures are tested. FINDING indicates potential "
-            "cross-owner data exposure in this lab, not a universal verdict."
+            "cross-owner data exposure in the intentionally vulnerable "
+            "local lab; it does not establish a production vulnerability."
         ),
     }
 
