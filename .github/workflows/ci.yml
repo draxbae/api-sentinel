@@ -1,0 +1,72 @@
+name: API Sentinel CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  regression-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install httpx PyYAML
+
+      - name: Start secure mock API
+        run: |
+          python -u src/mock_api.py > /tmp/secure-api.log 2>&1 &
+          echo $! > /tmp/secure-api.pid
+
+      - name: Start vulnerable lab API
+        run: |
+          python -u src/mock_api_vulnerable_lab.py > /tmp/vulnerable-api.log 2>&1 &
+          echo $! > /tmp/vulnerable-api.pid
+
+      - name: Wait for APIs
+        run: |
+          python - <<'PY'
+          import time
+          import urllib.request
+
+          targets = [
+              "http://127.0.0.1:8000",
+              "http://127.0.0.1:8001",
+          ]
+
+          for target in targets:
+              for attempt in range(30):
+                  try:
+                      urllib.request.urlopen(target, timeout=1)
+                      break
+                  except Exception:
+                      time.sleep(1)
+              else:
+                  raise SystemExit(f"API tidak siap: {target}")
+
+          print("Kedua API lab siap.")
+          PY
+
+      - name: Run regression tests
+        run: python src/regression_test.py
+
+      - name: Run BOLA comparison
+        run: python src/bola_test.py
+
+      - name: Generate Markdown report
+        run: python src/markdown_report.py
+
+      - name: Generate HTML report
+        run: python src/html_report.py
