@@ -1,0 +1,23 @@
+{
+  "tool": "API Sentinel",
+  "version": "0.2.0",
+  "generated_at": "2026-10-24T17:05:08.285589+00:00",
+  "total_findings": 3,
+  "findings": [
+    {
+      "severity": "REVIEW",
+      "endpoint": "GET /profile",
+      "issue": "No explicit security requirement"
+    },
+    {
+      "severity": "REVIEW",
+      "endpoint": "GET /orders/{order_id}",
+      "issue": "No explicit security requirement"
+    },
+    {
+      "severity": "REVIEW",
+      "endpoint": "GET /admin/users",
+      "issue": "No explicit security requirement"
+    }
+  ]
+}

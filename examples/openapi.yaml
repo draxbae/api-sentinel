@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: API Sentinel Practice API
+  version: 1.0.0
+
+paths:
+  /profile:
+    get:
+      summary: Get current user profile
+      operationId: getProfile
+      responses:
+        "200":
+          description: Successful response
+
+  /orders/{order_id}:
+    get:
+      summary: Get an order
+      operationId: getOrder
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Order found
+        "403":
+          description: Access denied
+
+  /admin/users:
+    get:
+      summary: List users
+      operationId: listUsers
+      responses:
+        "200":
+          description: Successful response

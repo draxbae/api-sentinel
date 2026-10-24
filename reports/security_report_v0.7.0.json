@@ -1,0 +1,26 @@
+{
+  "tool": "API Sentinel",
+  "version": "0.7.0",
+  "report_type": "Security assessment summary",
+  "generated_at": "2026-10-24T17:33:04.550085+00:00",
+  "source_report": "reports/bola_comparison_v0.6.0.json",
+  "summary": {
+    "targets_tested": 2,
+    "findings": 1,
+    "note": "Severity is a preliminary lab classification, not a production risk rating."
+  },
+  "findings": [
+    {
+      "title": "Potential Broken Object Level Authorization",
+      "category": "BOLA / IDOR",
+      "severity": "High",
+      "target": "http://127.0.0.1:8001",
+      "test": "Alice reads Bob's order",
+      "object_id": "1002",
+      "http_status": 200,
+      "evidence": "Alice received Bob's order data: potential BOLA in local lab.",
+      "recommendation": "Enforce server-side object ownership checks for every request. Verify that the authenticated principal is authorized to access the requested object.",
+      "scope": "Local lab fixture; validate before generalizing."
+    }
+  ]
+}

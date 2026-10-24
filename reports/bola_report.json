@@ -1,0 +1,50 @@
+{
+  "tool": "API Sentinel",
+  "version": "0.5.0",
+  "test_type": "Local BOLA/IDOR authorization lab",
+  "generated_at": "2026-10-24T17:26:11.207572+00:00",
+  "base_url": "http://127.0.0.1:8000",
+  "total_tests": 4,
+  "counts": {
+    "PASS": 4,
+    "FINDING": 0,
+    "FAIL": 0,
+    "REVIEW": 0,
+    "ERROR": 0
+  },
+  "results": [
+    {
+      "test": "Alice reads her own order",
+      "order_id": "1001",
+      "expected_status": 200,
+      "actual_status": 200,
+      "result": "PASS",
+      "detail": "Response matched expectation."
+    },
+    {
+      "test": "Alice cannot read Bob's order",
+      "order_id": "1002",
+      "expected_status": 403,
+      "actual_status": 403,
+      "result": "PASS",
+      "detail": "Cross-owner access was denied."
+    },
+    {
+      "test": "Bob reads his own order",
+      "order_id": "1002",
+      "expected_status": 200,
+      "actual_status": 200,
+      "result": "PASS",
+      "detail": "Response matched expectation."
+    },
+    {
+      "test": "Unauthenticated request is rejected",
+      "order_id": "1001",
+      "expected_status": 401,
+      "actual_status": 401,
+      "result": "PASS",
+      "detail": "Response matched expectation."
+    }
+  ],
+  "note": "A finding indicates a potential BOLA in this lab scenario. Passing these tests does not prove the entire API is secure."
+}

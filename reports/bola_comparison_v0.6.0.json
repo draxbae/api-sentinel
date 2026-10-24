@@ -1,0 +1,101 @@
+{
+  "tool": "API Sentinel",
+  "version": "0.6.0",
+  "test_type": "Local BOLA/IDOR comparison lab",
+  "generated_at": "2026-10-24T17:30:39.590914+00:00",
+  "reports": [
+    {
+      "target": "secure",
+      "base_url": "http://127.0.0.1:8000",
+      "total_tests": 4,
+      "counts": {
+        "PASS": 4,
+        "FINDING": 0,
+        "FAIL": 0,
+        "REVIEW": 0,
+        "ERROR": 0
+      },
+      "results": [
+        {
+          "test": "Alice reads own order",
+          "order_id": "1001",
+          "expected_status": 200,
+          "actual_status": 200,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        },
+        {
+          "test": "Alice reads Bob's order",
+          "order_id": "1002",
+          "expected_status": 403,
+          "actual_status": 403,
+          "result": "PASS",
+          "detail": "Cross-owner access was denied."
+        },
+        {
+          "test": "Bob reads own order",
+          "order_id": "1002",
+          "expected_status": 200,
+          "actual_status": 200,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        },
+        {
+          "test": "Unauthenticated request",
+          "order_id": "1001",
+          "expected_status": 401,
+          "actual_status": 401,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        }
+      ]
+    },
+    {
+      "target": "vulnerable_lab",
+      "base_url": "http://127.0.0.1:8001",
+      "total_tests": 4,
+      "counts": {
+        "PASS": 3,
+        "FINDING": 1,
+        "FAIL": 0,
+        "REVIEW": 0,
+        "ERROR": 0
+      },
+      "results": [
+        {
+          "test": "Alice reads own order",
+          "order_id": "1001",
+          "expected_status": 200,
+          "actual_status": 200,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        },
+        {
+          "test": "Alice reads Bob's order",
+          "order_id": "1002",
+          "expected_status": 403,
+          "actual_status": 200,
+          "result": "FINDING",
+          "detail": "Alice received Bob's order data: potential BOLA in local lab."
+        },
+        {
+          "test": "Bob reads own order",
+          "order_id": "1002",
+          "expected_status": 200,
+          "actual_status": 200,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        },
+        {
+          "test": "Unauthenticated request",
+          "order_id": "1001",
+          "expected_status": 401,
+          "actual_status": 401,
+          "result": "PASS",
+          "detail": "Response matched expectation."
+        }
+      ]
+    }
+  ],
+  "note": "Only local fixtures are tested. FINDING indicates potential cross-owner data exposure in this lab, not a universal verdict."
+}
