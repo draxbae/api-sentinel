@@ -2,7 +2,7 @@
   "tool": "API Sentinel",
   "version": "0.9.0",
   "test_type": "Local BOLA/IDOR comparison lab",
-  "generated_at": "2026-10-24T19:35:25.268268+00:00",
+  "generated_at": "2026-10-24T19:44:44.121343+00:00",
   "reports": [
     {
       "target": "secure",

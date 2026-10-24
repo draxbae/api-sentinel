@@ -1,3 +1,6 @@
+cd ~/api-sentinel
+
+cat > .github/workflows/ci.yml <<'YAML'
 name: API Sentinel CI
 
 on:
@@ -7,9 +10,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   regression-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
@@ -19,11 +26,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install httpx PyYAML
+          python -m pip install httpx PyYAML
+
+      - name: Check Python syntax
+        run: python -m py_compile src/*.py
 
       - name: Start secure mock API
         run: |
@@ -41,32 +52,55 @@ jobs:
           import socket
           import time
 
-          targets = [8000, 8001]
-
-          for port in targets:
-              for attempt in range(30):
+          for port in (8000, 8001):
+              for _ in range(30):
                   try:
                       with socket.create_connection(
                           ("127.0.0.1", port), timeout=1
                       ):
-                          print(f"API pada port {port} siap.")
-                      break
+                          print(f"API port {port} siap.")
+                          break
                   except OSError:
                       time.sleep(1)
               else:
-                  raise SystemExit(f"API tidak siap pada port {port}")
+                  raise SystemExit(f"API port {port} tidak siap.")
 
-          print("Kedua API lab siap.")
+          print("Kedua mock API siap.")
           PY
-
-      - name: Run regression tests
-        run: python src/regression_test.py
 
       - name: Run BOLA comparison
         run: python src/bola_test.py
+
+      - name: Run regression tests
+        run: python src/regression_test.py
 
       - name: Generate Markdown report
         run: python src/markdown_report.py
 
       - name: Generate HTML report
         run: python src/html_report.py
+
+      - name: Upload test reports and API logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-sentinel-ci-reports
+          if-no-files-found: warn
+          path: |
+            reports/
+            /tmp/secure-api.log
+            /tmp/vulnerable-api.log
+
+      - name: Stop mock APIs
+        if: always()
+        run: |
+          if [ -f /tmp/secure-api.pid ]; then
+            kill "$(cat /tmp/secure-api.pid)" 2>/dev/null || true
+          fi
+          if [ -f /tmp/vulnerable-api.pid ]; then
+            kill "$(cat /tmp/vulnerable-api.pid)" 2>/dev/null || true
+          fi
+YAML
+
+git diff --check
+git diff -- .github/workflows/ci.yml
