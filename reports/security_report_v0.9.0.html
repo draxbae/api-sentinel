@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Sentinel Security Report</title>
+<style>
+body { font-family: system-ui, sans-serif; max-width: 1000px;
+       margin: 36px auto; padding: 0 18px; color: #202938; }
+header, .card, .finding { border: 1px solid #d8dee8; border-radius: 12px;
+                           padding: 18px; margin-bottom: 18px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit,
+         minmax(150px, 1fr)); gap: 12px; }
+.metric { font-size: 2rem; font-weight: 700; }
+table { width: 100%; border-collapse: collapse; display: block;
+         overflow-x: auto; }
+th, td { text-align: left; border-bottom: 1px solid #e2e6ed;
+          padding: 10px; }
+th { background: #f3f5f8; }
+.finding { border-left: 5px solid #d97706; overflow-wrap: anywhere; }
+.note { color: #566174; }
+</style>
+</head>
+<body>
+<header>
+  <h1>API Sentinel</h1>
+  <p>Security Assessment Report · Version 0.9.0</p>
+  <p>Generated: 2026-10-24T20:30:19.053821+00:00</p>
+  <p class="note">Scope: local BOLA/IDOR fixtures only.</p>
+</header>
+<div class="cards">
+  <div class="card"><div>Targets tested</div>
+  <div class="metric">2</div></div>
+  <div class="card"><div>Tests</div>
+  <div class="metric">12</div></div>
+  <div class="card"><div>Potential findings</div>
+  <div class="metric">1</div></div>
+</div>
+<h2>Test results</h2>
+<div class="card">
+<table>
+<thead><tr><th>Target</th><th>Test</th><th>Expected</th>
+<th>Actual</th><th>Result</th></tr></thead>
+<tbody><tr><td>secure</td><td>Alice reads own order</td><td>200</td><td>200</td><td><strong>PASS</strong></td></tr><tr><td>secure</td><td>Alice reads Bob&#x27;s order</td><td>403</td><td>403</td><td><strong>PASS</strong></td></tr><tr><td>secure</td><td>Bob reads own order</td><td>200</td><td>200</td><td><strong>PASS</strong></td></tr><tr><td>secure</td><td>Unauthenticated request</td><td>401</td><td>401</td><td><strong>PASS</strong></td></tr><tr><td>secure</td><td>Invalid token</td><td>401</td><td>401</td><td><strong>PASS</strong></td></tr><tr><td>secure</td><td>Nonexistent order</td><td>404</td><td>404</td><td><strong>PASS</strong></td></tr><tr><td>vulnerable_lab</td><td>Alice reads own order</td><td>200</td><td>200</td><td><strong>PASS</strong></td></tr><tr><td>vulnerable_lab</td><td>Alice reads Bob&#x27;s order</td><td>403</td><td>200</td><td><strong>FINDING</strong></td></tr><tr><td>vulnerable_lab</td><td>Bob reads own order</td><td>200</td><td>200</td><td><strong>PASS</strong></td></tr><tr><td>vulnerable_lab</td><td>Unauthenticated request</td><td>401</td><td>401</td><td><strong>PASS</strong></td></tr><tr><td>vulnerable_lab</td><td>Invalid token</td><td>401</td><td>401</td><td><strong>PASS</strong></td></tr><tr><td>vulnerable_lab</td><td>Nonexistent order</td><td>404</td><td>404</td><td><strong>PASS</strong></td></tr></tbody>
+</table>
+</div>
+<h2>Findings and recommendations</h2>
+
+        <section class="finding">
+          <h3>Potential BOLA / IDOR</h3>
+          <p><b>Target lab:</b> http://127.0.0.1:8001</p>
+          <p><b>Test:</b> Alice reads Bob&#x27;s order</p>
+          <p><b>Object ID:</b> 1002</p>
+          <p><b>Expected HTTP:</b> 403</p>
+          <p><b>Actual HTTP:</b> 200</p>
+          <p><b>Evidence:</b> Cross-owner data was exposed.</p>
+          <p><b>Recommendation:</b> Enforce server-side ownership and
+          authorization checks for every requested object.</p>
+        </section>
+
+<h2>Limitations</h2>
+<p class="note">This assessment uses intentionally configured local fixtures.
+The lab result is not proof of a vulnerability in a production system.
+Further authorized validation is required before assigning a real-world risk.</p>
+<p class="note">Source: reports/bola_comparison.json</p>
+</body>
+</html>
