@@ -1,7 +1,7 @@
 # API Sentinel — Security Assessment
 
 **Versi:** 1.0.0
-**Dibuat:** 2026-10-24T20:45:31.004503+00:00
+**Dibuat:** 2026-10-25T13:29:22.231960+00:00
 **Cakupan:** Lab BOLA/IDOR lokal
 
 ## Ringkasan
@@ -21,10 +21,23 @@
 
 - **Target lab:** `http://127.0.0.1:8001`
 - **Pengujian:** Alice reads Bob's order
+- **Metode:** `GET`
+- **Endpoint:** `/orders/1002`
 - **ID objek:** `1002`
 - **Status HTTP yang diharapkan:** `403`
 - **Status HTTP aktual:** `200`
-- **Bukti:** Cross-owner data was exposed.
+- **Hasil lintas pemilik:** `True`
+- **Data terekspos:** `True`
+- **Detail:** Cross-owner data was exposed.
+
+**Response body:**
+
+```json
+{
+  "order_id": "1002",
+  "item": "Keyboard"
+}
+```
 
 **Rekomendasi:** Terapkan pemeriksaan otorisasi di sisi server untuk setiap objek dan pastikan pengguna yang terautentikasi memiliki izin mengakses objek yang diminta.
 

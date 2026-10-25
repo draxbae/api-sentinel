@@ -18,6 +18,8 @@ th, td { text-align: left; border-bottom: 1px solid #e2e6ed;
           padding: 10px; }
 th { background: #f3f5f8; }
 .finding { border-left: 5px solid #d97706; overflow-wrap: anywhere; }
+pre { padding: 14px; background: #f3f5f8; border-radius: 8px;
+       white-space: pre-wrap; overflow-wrap: anywhere; }
 .note { color: #566174; }
 </style>
 </head>
@@ -25,7 +27,7 @@ th { background: #f3f5f8; }
 <header>
   <h1>API Sentinel</h1>
   <p>Security Assessment Report · Version 1.0.0</p>
-  <p>Generated: 2026-10-24T20:45:31.096404+00:00</p>
+  <p>Generated: 2026-10-25T13:29:22.275979+00:00</p>
   <p class="note">Scope: local BOLA/IDOR fixtures only.</p>
 </header>
 <div class="cards">
@@ -47,13 +49,23 @@ th { background: #f3f5f8; }
 <h2>Findings and recommendations</h2>
 
         <section class="finding">
-          <h3>Potential BOLA / IDOR</h3>
+          <h3>1. Potential BOLA / IDOR</h3>
           <p><b>Target lab:</b> http://127.0.0.1:8001</p>
           <p><b>Test:</b> Alice reads Bob&#x27;s order</p>
+          <p><b>Method:</b> GET</p>
+          <p><b>Endpoint:</b> /orders/1002</p>
           <p><b>Object ID:</b> 1002</p>
           <p><b>Expected HTTP:</b> 403</p>
           <p><b>Actual HTTP:</b> 200</p>
-          <p><b>Evidence:</b> Cross-owner data was exposed.</p>
+          <p><b>Cross-owner access:</b>
+             True</p>
+          <p><b>Data exposed:</b> True</p>
+          <p><b>Detail:</b> Cross-owner data was exposed.</p>
+          <h4>Response body</h4>
+          <pre>{
+  &quot;order_id&quot;: &quot;1002&quot;,
+  &quot;item&quot;: &quot;Keyboard&quot;
+}</pre>
           <p><b>Recommendation:</b> Enforce server-side ownership and
           authorization checks for every requested object.</p>
         </section>

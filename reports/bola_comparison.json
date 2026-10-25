@@ -2,7 +2,8 @@
   "tool": "API Sentinel",
   "version": "1.0.0",
   "test_type": "Local BOLA/IDOR comparison lab",
-  "generated_at": "2026-10-24T20:45:30.854385+00:00",
+  "generated_at": "2026-10-25T13:24:36.637451+00:00",
+  "evidence_format": "response-body-v1",
   "reports": [
     {
       "target": "secure",
@@ -18,51 +19,107 @@
       "results": [
         {
           "test": "Alice reads own order",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 200,
           "actual_status": 200,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "order_id": "1001",
+              "item": "Laptop"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Alice reads Bob's order",
+          "method": "GET",
+          "endpoint": "/orders/1002",
           "order_id": "1002",
           "expected_status": 403,
           "actual_status": 403,
           "result": "PASS",
-          "detail": "Cross-owner access was denied."
+          "detail": "Cross-owner access was denied.",
+          "evidence": {
+            "response_body": {
+              "error": "Forbidden"
+            },
+            "cross_owner_access": true,
+            "data_exposed": false
+          }
         },
         {
           "test": "Bob reads own order",
+          "method": "GET",
+          "endpoint": "/orders/1002",
           "order_id": "1002",
           "expected_status": 200,
           "actual_status": 200,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "order_id": "1002",
+              "item": "Keyboard"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Unauthenticated request",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 401,
           "actual_status": 401,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Unauthorized"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Invalid token",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 401,
           "actual_status": 401,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Unauthorized"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Nonexistent order",
+          "method": "GET",
+          "endpoint": "/orders/9999",
           "order_id": "9999",
           "expected_status": 404,
           "actual_status": 404,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Not found"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         }
       ]
     },
@@ -80,51 +137,108 @@
       "results": [
         {
           "test": "Alice reads own order",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 200,
           "actual_status": 200,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "order_id": "1001",
+              "item": "Laptop"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Alice reads Bob's order",
+          "method": "GET",
+          "endpoint": "/orders/1002",
           "order_id": "1002",
           "expected_status": 403,
           "actual_status": 200,
           "result": "FINDING",
-          "detail": "Cross-owner data was exposed."
+          "detail": "Cross-owner data was exposed.",
+          "evidence": {
+            "response_body": {
+              "order_id": "1002",
+              "item": "Keyboard"
+            },
+            "cross_owner_access": true,
+            "data_exposed": true
+          }
         },
         {
           "test": "Bob reads own order",
+          "method": "GET",
+          "endpoint": "/orders/1002",
           "order_id": "1002",
           "expected_status": 200,
           "actual_status": 200,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "order_id": "1002",
+              "item": "Keyboard"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Unauthenticated request",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 401,
           "actual_status": 401,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Unauthorized"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Invalid token",
+          "method": "GET",
+          "endpoint": "/orders/1001",
           "order_id": "1001",
           "expected_status": 401,
           "actual_status": 401,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Unauthorized"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         },
         {
           "test": "Nonexistent order",
+          "method": "GET",
+          "endpoint": "/orders/9999",
           "order_id": "9999",
           "expected_status": 404,
           "actual_status": 404,
           "result": "PASS",
-          "detail": "Response matched expectation."
+          "detail": "Response matched expectation.",
+          "evidence": {
+            "response_body": {
+              "error": "Not found"
+            },
+            "cross_owner_access": false,
+            "data_exposed": false
+          }
         }
       ]
     }

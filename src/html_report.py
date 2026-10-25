@@ -1,4 +1,3 @@
-
 import html
 import json
 from datetime import datetime, timezone
@@ -30,28 +29,44 @@ def main():
     rows = []
     for target in targets:
         for result in target.get("results", []):
-            status = result.get("result", "UNKNOWN")
             rows.append(
                 "<tr>"
                 f"<td>{esc(target.get('target'))}</td>"
                 f"<td>{esc(result.get('test'))}</td>"
                 f"<td>{esc(result.get('expected_status'))}</td>"
                 f"<td>{esc(result.get('actual_status'))}</td>"
-                f"<td><strong>{esc(status)}</strong></td>"
+                f"<td><strong>{esc(result.get('result'))}</strong></td>"
                 "</tr>"
             )
 
     finding_sections = []
-    for target, result in findings:
+    for index, (target, result) in enumerate(findings, start=1):
+        evidence = result.get("evidence") or {}
+        response_body = evidence.get("response_body")
+
+        if response_body is not None:
+            response_json = json.dumps(
+                response_body, indent=2, ensure_ascii=False
+            )
+        else:
+            response_json = "Tidak tersedia"
+
         finding_sections.append(f"""
         <section class="finding">
-          <h3>Potential BOLA / IDOR</h3>
+          <h3>{index}. Potential BOLA / IDOR</h3>
           <p><b>Target lab:</b> {esc(target.get('base_url'))}</p>
           <p><b>Test:</b> {esc(result.get('test'))}</p>
+          <p><b>Method:</b> {esc(result.get('method'))}</p>
+          <p><b>Endpoint:</b> {esc(result.get('endpoint'))}</p>
           <p><b>Object ID:</b> {esc(result.get('order_id'))}</p>
           <p><b>Expected HTTP:</b> {esc(result.get('expected_status'))}</p>
           <p><b>Actual HTTP:</b> {esc(result.get('actual_status'))}</p>
-          <p><b>Evidence:</b> {esc(result.get('detail'))}</p>
+          <p><b>Cross-owner access:</b>
+             {esc(evidence.get('cross_owner_access'))}</p>
+          <p><b>Data exposed:</b> {esc(evidence.get('data_exposed'))}</p>
+          <p><b>Detail:</b> {esc(result.get('detail'))}</p>
+          <h4>Response body</h4>
+          <pre>{esc(response_json)}</pre>
           <p><b>Recommendation:</b> Enforce server-side ownership and
           authorization checks for every requested object.</p>
         </section>
@@ -82,6 +97,8 @@ th, td {{ text-align: left; border-bottom: 1px solid #e2e6ed;
           padding: 10px; }}
 th {{ background: #f3f5f8; }}
 .finding {{ border-left: 5px solid #d97706; overflow-wrap: anywhere; }}
+pre {{ padding: 14px; background: #f3f5f8; border-radius: 8px;
+       white-space: pre-wrap; overflow-wrap: anywhere; }}
 .note {{ color: #566174; }}
 </style>
 </head>

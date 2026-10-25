@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Sentinel — Auth/BOLA Report</title>
+<style>
+:root {
+  color-scheme: dark;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0b1020;
+  color: #e5e7eb;
+}
+body { max-width: 1050px; margin: 0 auto; padding: 24px; }
+header, section { background: #141b2d; border: 1px solid #29344b;
+  border-radius: 14px; padding: 22px; margin-bottom: 18px; }
+h1 { margin-bottom: 6px; }
+.muted { color: #a6b0c3; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+  gap: 12px; }
+.card { background: #0b1020; border-radius: 10px; padding: 16px; }
+.number { font-size: 28px; font-weight: 700; }
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 12px 9px; text-align: left; border-bottom: 1px solid #29344b; }
+th { color: #a6b0c3; }
+.badge { display: inline-block; padding: 4px 9px; border-radius: 99px; font-weight: 700; }
+.pass { background: #123b2c; color: #86efac; }
+.fail { background: #4c1d1d; color: #fca5a5; }
+.other { background: #3b2e12; color: #fde68a; }
+code, pre { overflow-wrap: anywhere; }
+pre { white-space: pre-wrap; background: #0b1020; padding: 14px; border-radius: 8px; }
+details { border-top: 1px solid #29344b; padding: 14px 0; }
+summary { cursor: pointer; font-weight: 650; }
+dt { color: #a6b0c3; margin-top: 8px; }
+dd { margin-left: 0; }
+@media (max-width: 650px) {
+  body { padding: 12px; }
+  header, section { padding: 15px; overflow-wrap: anywhere; }
+  table { font-size: 13px; }
+  th, td { padding: 8px 5px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <p class="muted">API SECURITY TESTING CONSOLE</p>
+  <h1>API Sentinel</h1>
+  <h2>Auth-Aware BOLA Assessment</h2>
+  <p class="muted">Version 1.1.0 · Generated 2026-10-25T13:11:06.943343+00:00</p>
+  <p>Scope: localhost lab only</p>
+  <p>Target: <code>http://127.0.0.1:8000</code></p>
+</header>
+<section>
+  <h2>Summary</h2>
+  <div class="cards">
+    <div class="card"><div class="muted">Total tests</div>
+      <div class="number">6</div></div>
+    <div class="card"><div class="muted">Passed</div>
+      <div class="number">6</div></div>
+    <div class="card"><div class="muted">Failed</div>
+      <div class="number">0</div></div>
+    <div class="card"><div class="muted">Errors</div>
+      <div class="number">0</div></div>
+  </div>
+</section>
+<section>
+  <h2>Test results</h2>
+  <div style="overflow-x:auto">
+  <table>
+    <thead><tr><th>Test</th><th>Endpoint</th><th>Expected</th>
+    <th>Actual</th><th>Result</th></tr></thead>
+    <tbody><tr><td>Alice reads own order</td><td><code>GET /orders/1001</code></td><td>200</td><td>200</td><td><span class="badge pass">PASS</span></td></tr><tr><td>Alice reads Bob&#x27;s order</td><td><code>GET /orders/1002</code></td><td>403</td><td>403</td><td><span class="badge pass">PASS</span></td></tr><tr><td>Bob reads own order</td><td><code>GET /orders/1002</code></td><td>200</td><td>200</td><td><span class="badge pass">PASS</span></td></tr><tr><td>Unauthenticated request</td><td><code>GET /orders/1001</code></td><td>401</td><td>401</td><td><span class="badge pass">PASS</span></td></tr><tr><td>Invalid token</td><td><code>GET /orders/1001</code></td><td>401</td><td>401</td><td><span class="badge pass">PASS</span></td></tr><tr><td>Nonexistent order</td><td><code>GET /orders/999999</code></td><td>404</td><td>404</td><td><span class="badge pass">PASS</span></td></tr></tbody>
+  </table>
+  </div>
+</section>
+<section>
+  <h2>Evidence details</h2>
+  <details><summary>Alice reads own order</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/1001</dd><dt>Expected status</dt><dd>200</dd><dt>Actual status</dt><dd>200</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;order_id&quot;: &quot;1001&quot;,
+  &quot;item&quot;: &quot;Laptop&quot;
+}</pre></details><details><summary>Alice reads Bob&#x27;s order</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/1002</dd><dt>Expected status</dt><dd>403</dd><dt>Actual status</dt><dd>403</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;error&quot;: &quot;Forbidden&quot;
+}</pre></details><details><summary>Bob reads own order</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/1002</dd><dt>Expected status</dt><dd>200</dd><dt>Actual status</dt><dd>200</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;order_id&quot;: &quot;1002&quot;,
+  &quot;item&quot;: &quot;Keyboard&quot;
+}</pre></details><details><summary>Unauthenticated request</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/1001</dd><dt>Expected status</dt><dd>401</dd><dt>Actual status</dt><dd>401</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;error&quot;: &quot;Unauthorized&quot;
+}</pre></details><details><summary>Invalid token</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/1001</dd><dt>Expected status</dt><dd>401</dd><dt>Actual status</dt><dd>401</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;error&quot;: &quot;Unauthorized&quot;
+}</pre></details><details><summary>Nonexistent order</summary><dl><dt>Method</dt><dd>GET</dd><dt>Path</dt><dd>/orders/999999</dd><dt>Expected status</dt><dd>404</dd><dt>Actual status</dt><dd>404</dd><dt>Result</dt><dd>PASS</dd></dl><pre>{
+  &quot;error&quot;: &quot;Not found&quot;
+}</pre></details>
+</section>
+<section>
+  <h2>Limitations</h2>
+  <ul><li>Only predefined local lab cases were tested.</li><li>Passing these tests does not prove overall API security.</li><li>This report does not assign a CVSS score.</li></ul>
+  <p class="muted">These results apply only to the configured local lab scenarios.
+  They do not prove overall API security or assign a CVSS score.</p>
+</section>
+</body>
+</html>

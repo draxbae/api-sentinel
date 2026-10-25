@@ -1,24 +1,31 @@
 {
   "tool": "API Sentinel",
-  "version": "0.3.0",
-  "generated_at": "2026-10-24T17:12:48.041073+00:00",
+  "version": "1.0.0",
+  "generated_at": "2026-10-25T12:59:41.152372+00:00",
   "base_url": "http://127.0.0.1:8000",
+  "scope": "localhost lab only",
+  "dynamic_parameter_values": {
+    "order_id": "1001"
+  },
   "results": [
     {
       "method": "GET",
       "path": "/profile",
+      "resolved_path": "/profile",
       "status_code": 200,
       "content_type": "application/json"
     },
     {
       "method": "GET",
       "path": "/orders/{order_id}",
-      "status": "SKIPPED",
-      "reason": "Dynamic path parameter needs a test value"
+      "resolved_path": "/orders/1001",
+      "status_code": 401,
+      "content_type": "application/json"
     },
     {
       "method": "GET",
       "path": "/admin/users",
+      "resolved_path": "/admin/users",
       "status_code": 403,
       "content_type": "application/json"
     }

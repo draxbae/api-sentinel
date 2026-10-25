@@ -1,0 +1,88 @@
+{
+  "tool": "API Sentinel",
+  "version": "1.1.0",
+  "generated_at": "2026-10-25T13:11:06.943343+00:00",
+  "scope": "localhost lab only",
+  "target": "http://127.0.0.1:8000",
+  "summary": {
+    "total": 6,
+    "pass": 6,
+    "fail": 0,
+    "error": 0
+  },
+  "results": [
+    {
+      "test": "Alice reads own order",
+      "method": "GET",
+      "path": "/orders/1001",
+      "expected_status": 200,
+      "actual_status": 200,
+      "result": "PASS",
+      "response_body": {
+        "order_id": "1001",
+        "item": "Laptop"
+      }
+    },
+    {
+      "test": "Alice reads Bob's order",
+      "method": "GET",
+      "path": "/orders/1002",
+      "expected_status": 403,
+      "actual_status": 403,
+      "result": "PASS",
+      "response_body": {
+        "error": "Forbidden"
+      }
+    },
+    {
+      "test": "Bob reads own order",
+      "method": "GET",
+      "path": "/orders/1002",
+      "expected_status": 200,
+      "actual_status": 200,
+      "result": "PASS",
+      "response_body": {
+        "order_id": "1002",
+        "item": "Keyboard"
+      }
+    },
+    {
+      "test": "Unauthenticated request",
+      "method": "GET",
+      "path": "/orders/1001",
+      "expected_status": 401,
+      "actual_status": 401,
+      "result": "PASS",
+      "response_body": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "test": "Invalid token",
+      "method": "GET",
+      "path": "/orders/1001",
+      "expected_status": 401,
+      "actual_status": 401,
+      "result": "PASS",
+      "response_body": {
+        "error": "Unauthorized"
+      }
+    },
+    {
+      "test": "Nonexistent order",
+      "method": "GET",
+      "path": "/orders/999999",
+      "expected_status": 404,
+      "actual_status": 404,
+      "result": "PASS",
+      "response_body": {
+        "error": "Not found"
+      }
+    }
+  ],
+  "limitations": [
+    "Only predefined local lab cases were tested.",
+    "Passing these tests does not prove overall API security.",
+    "This report does not assign a CVSS score."
+  ]
+}

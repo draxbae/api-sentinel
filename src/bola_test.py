@@ -130,16 +130,29 @@ def check_target(target):
 
                 entry = {
                     "test": case["name"],
+                    "method": "GET",
+                    "endpoint": f"/orders/{case['order_id']}",
                     "order_id": case["order_id"],
                     "expected_status": case["expected_status"],
                     "actual_status": status,
                     "result": result,
                     "detail": detail,
+                    "evidence": {
+                        "response_body": body,
+                        "cross_owner_access": bool(case.get("cross_owner")),
+                        "data_exposed": bool(
+                            case.get("cross_owner")
+                            and status == 200
+                            and item == "Keyboard"
+                        ),
+                    },
                 }
 
             except httpx.HTTPError as exc:
                 entry = {
                     "test": case["name"],
+                    "method": "GET",
+                    "endpoint": f"/orders/{case['order_id']}",
                     "order_id": case["order_id"],
                     "expected_status": case["expected_status"],
                     "actual_status": None,
@@ -175,6 +188,7 @@ def main():
         "version": "1.0.0",
         "test_type": "Local BOLA/IDOR comparison lab",
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "evidence_format": "response-body-v1",
         "reports": reports,
         "note": (
             "Only local fixtures are tested. FINDING indicates potential "
