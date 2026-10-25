@@ -2,198 +2,163 @@
 
 **Local API Security Testing Toolkit — BOLA/IDOR Detection**
 
-API Sentinel is a Python-based security testing toolkit for evaluating API authorization behavior using controlled local fixtures. It compares a secure mock API with an intentionally vulnerable lab API and generates security assessment reports.
+API Sentinel is a Python-based security testing toolkit for evaluating API authorization behavior in controlled local environments. It compares a secure mock API with an intentionally vulnerable lab API and generates security assessment reports.
 
 ## Features
 
-- BOLA/IDOR authorization testing
-- Secure API versus intentionally vulnerable lab comparison
-- HTTP authentication and authorization checks
-- Regression tests for expected security behavior
-- JSON, Markdown, and HTML security reports
+- BOLA (Broken Object Level Authorization) and IDOR testing
+- Secure versus intentionally vulnerable local API comparison
+- Authentication-aware authorization test scenarios
+- HTTP security checks restricted to localhost
 - OpenAPI specification auditing
-- Local-only testing environment
+- Regression testing for expected security behavior
+- JSON, Markdown, and HTML security reports
+- Interactive command-line interface (CLI)
+- Evidence-based security assessment workflow
+- Controlled local testing environment
+
+## Requirements
+
+- Python 3
+- Git
+- Linux, macOS, or another environment capable of running Python
+- Network access only when installing project dependencies
+
+## Installation
+
+Clone the repository and enter the project directory:
+
+```bash
+git clone https://github.com/draxbae/api-sentinel.git
+cd api-sentinel
+```
+
+Create and activate a virtual environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Usage
+
+Start the interactive CLI:
+
+```bash
+python src/cli.py
+```
+
+The CLI provides options for:
+
+1. BOLA / IDOR scanning against the local lab
+2. OpenAPI specification auditing
+3. HTTP security checks restricted to localhost
+4. Viewing available reports
+5. Generating HTML and Markdown reports
+6. Exiting the application
+7. Running authentication-aware BOLA tests
+8. Generating authentication-aware BOLA reports
+
+The available features depend on the scripts and configuration included in the repository version you are using.
+
+## Testing
+
+### Regression Tests
+
+Run the regression test suite:
+
+```bash
+python src/regression_test.py
+```
+
+This checks the expected behavior of the project's local security testing scenarios.
+
+### Authentication-Aware BOLA Tests
+
+Run the authentication-aware test suite:
+
+```bash
+python src/auth_bola_test.py
+```
+
+These tests exercise authorization scenarios using the project's controlled fixtures, including permitted access, denied cross-user access, invalid authentication, and missing resources.
+
+### Generate Authentication-Aware Reports
+
+Run:
+
+```bash
+python src/auth_report.py
+```
+
+Review the generated output to inspect the evidence and findings produced by the tests.
+
+## Reports and Evidence
+
+The `reports/` directory contains generated security assessment artifacts. Depending on the tests run, these may include:
+
+- JSON evidence and structured results
+- Markdown security reports
+- HTML security reports
+- Secure-versus-vulnerable API comparison results
+- HTTP security check results
+- Authentication-aware BOLA test reports
+
+Reports reflect the state of the test environment at the time they were generated. Review and validate the evidence before using it in a formal security assessment.
 
 ## Project Structure
 
 ```text
 api-sentinel/
-├── .github/
-│   └── workflows/
-├── backups/
-├── evidence/
-│   ├── 01-regression-tests.png
-│   ├── 02-bola-comparison.png
-│   ├── 03-github-actions-success.png
-│   └── 04-release-v0.8.0.png
-├── examples/
-│   └── openapi.yaml
-├── reports/
-│   ├── bola_comparison.json
-│   ├── bola_comparison_v0.6.0.json
-│   ├── bola_comparison_v0.8.0.json
-│   ├── bola_report.json
-│   ├── http_check.json
-│   ├── security_report_v0.7.0.json
-│   ├── security_report_v0.8.0.html
-│   ├── security_report_v0.8.0.md
-│   ├── security_report_v1.0.0.html
-│   ├── security_report_v1.0.0.md
-│   └── spec_audit.json
 ├── src/
+│   ├── auth_bola_test.py
+│   ├── auth_report.py
 │   ├── bola_test.py
+│   ├── cli.py
 │   ├── html_report.py
+│   ├── http_checker.py
 │   ├── markdown_report.py
 │   ├── mock_api.py
 │   ├── mock_api_vulnerable_lab.py
+│   ├── openapi_parser.py
 │   ├── regression_test.py
+│   ├── report_generator.py
+│   ├── report_v07.py
 │   ├── sentinel.py
 │   └── spec_audit.py
-├── .gitignore
+├── reports/
+├── requirements.txt
 └── README.md
 ```
 
-## Requirements
+The files listed above describe the main components. Additional files may exist in the repository.
 
-- Python 3
-- Python virtual environment
-- `httpx`
-- `PyYAML`
+## Testing Scope
 
-Install dependencies inside your virtual environment:
+API Sentinel is designed for controlled API security assessment. Its local fixtures help evaluate whether authorization rules behave as expected, particularly when users attempt to access objects belonging to other users.
 
-```bash
-cd ~/api-sentinel
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+A passing test suite demonstrates the expected behavior of the tested scenarios; it does not prove that every possible vulnerability has been eliminated.
 
-## Run the Local Lab
+## Responsible Use
 
-Run each API in a separate terminal.
+- Test only systems you own or have explicit permission to assess.
+- Prefer the included local fixtures and lab APIs for experimentation.
+- Do not send test payloads to public systems without authorization.
+- Protect tokens, credentials, personal information, and security evidence.
+- Validate findings before reporting them to the relevant system owner.
 
-### Terminal 1 — Secure API
+## Limitations
 
-```bash
-cd ~/api-sentinel
-source .venv/bin/activate
-python -u src/mock_api.py
-```
+Results depend on the configured fixtures, test scenarios, and available evidence. Automated checks may produce false positives or false negatives and should be supplemented with manual review.
 
-### Terminal 2 — Intentionally Vulnerable Lab API
+Risk ratings and severity assessments should be supported by evidence and reviewed before being treated as final.
 
-```bash
-cd ~/api-sentinel
-source .venv/bin/activate
-python src/mock_api_vulnerable_lab.py
-```
+## Disclaimer
 
-Use the vulnerable fixture only in your own local lab or an explicitly authorized environment.
-
-## Run the Tests
-
-Open a third terminal after both APIs have started:
-
-```bash
-cd ~/api-sentinel
-source .venv/bin/activate
-
-python src/bola_test.py
-python src/regression_test.py
-python src/markdown_report.py
-python src/html_report.py
-```
-
-Run the OpenAPI specification audit when needed:
-
-```bash
-python src/spec_audit.py
-```
-
-## Latest Lab Results
-
-API Sentinel v1.0.0 includes six BOLA test cases for each local fixture.
-
-- Secure fixture: six tests passed.
-- Vulnerable lab fixture: five tests passed and one intentional BOLA finding detected.
-- Regression tests: 19/19 checks passed in the latest local run.
-
-The intentional finding occurs when Alice requests Bob's order. The secure fixture denies cross-owner access, while the vulnerable lab intentionally returns the order data.
-
-These results apply only to the controlled local fixtures. They do not establish a vulnerability in any production API.
-
-Test results and generated reports may change when the tests are run again.
-
-## Reports
-
-The `reports/` directory contains structured test results and generated reports:
-
-| File | Purpose |
-|---|---|
-| `bola_comparison.json` | Current BOLA comparison results |
-| `bola_comparison_v0.6.0.json` | BOLA comparison results for version 0.6.0 |
-| `bola_comparison_v0.8.0.json` | BOLA comparison results for version 0.8.0 |
-| `bola_report.json` | BOLA report data |
-| `http_check.json` | HTTP check results |
-| `security_report_v0.7.0.json` | Security report data for version 0.7.0 |
-| `security_report_v0.8.0.md` | Historical Markdown security report for v0.8.0 |
-| `security_report_v1.0.0.md` | Current Markdown security report for v1.0.0 |
-| `security_report_v0.8.0.html` | Historical HTML security report for v0.8.0 |
-| `security_report_v1.0.0.html` | Current HTML security report for v1.0.0 |
-| `spec_audit.json` | OpenAPI specification audit results |
-
-Open the HTML report in a browser:
-
-```bash
-firefox reports/security_report_v1.0.0.html
-```
-
-Report contents depend on the latest test results generated locally. Regenerate reports after running tests if you need updated results.
-
-## Evidence
-
-The `evidence/` directory contains screenshots documenting:
-
-1. Regression test results
-2. BOLA comparison results
-3. Successful GitHub Actions workflow
-4. GitHub Release v0.8.0
-
-Browse the evidence on GitHub:
-
-https://github.com/draxbae/api-sentinel/tree/main/evidence
-
-## Continuous Integration and Release
-
-The repository includes a GitHub Actions workflow for automated checks.
-
-- Repository: https://github.com/draxbae/api-sentinel
-- GitHub Actions: https://github.com/draxbae/api-sentinel/actions
-- Latest release v1.0.0: https://github.com/draxbae/api-sentinel/releases/tag/v1.0.0
-- Previous release v0.8.0: https://github.com/draxbae/api-sentinel/releases/tag/v0.8.0
-
-## Security Recommendations
-
-APIs should enforce server-side authorization and object ownership checks on every request. Authentication alone does not guarantee that a user is allowed to access a particular object.
-
-Recommended practices include:
-
-- Verify that the authenticated user is authorized to access each requested object.
-- Deny cross-user access by default.
-- Test authorization behavior with positive and negative cases.
-- Keep regression tests for authorization controls.
-- Avoid exposing sensitive data in API responses or logs.
-
-## Scope and Disclaimer
-
-API Sentinel is intended for education, local security testing, and explicitly authorized assessments.
-
-The vulnerable API is an intentionally configured local fixture. Its behavior is not evidence of a vulnerability in any production system.
-
-Do not test systems without explicit permission.
-
-## Current Version
-
-- Toolkit test version: 1.0.0
-- Documentation version: 1.0.0
-- Previous GitHub release: v0.8.0
+API Sentinel is provided for educational and authorized security testing purposes. Users are responsible for obtaining appropriate authorization and complying with applicable laws, regulations, and program rules.
