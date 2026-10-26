@@ -27,6 +27,27 @@ The project uses intentionally configured local test fixtures to demonstrate aut
 
 ## Features
 
+## Runtime API Scanner (Read-only)
+
+The CLI includes a limited runtime API scanner that reads an OpenAPI specification
+and performs selected GET/HEAD requests against a configured API origin.
+
+Current limitations and safeguards:
+- Only GET and HEAD methods are considered.
+- Paths with unresolved path parameters are skipped.
+- Login and logout paths are skipped.
+- Redirects are not followed.
+- Requests use a timeout and a delay between requests.
+- Results are observations for review, not proof of a vulnerability.
+
+The default specification path is `targets/petstore-openapi.json`.
+This file may not be present in a fresh clone because the `targets/` directory
+is excluded from Git. Provide a valid local OpenAPI specification before scanning.
+
+Only test systems you own or have explicit permission to assess. Confirm the
+target scope and applicable rate limits before using the runtime scanner.
+
+
 ### 1. BOLA / IDOR Scanner
 
 - Compares authorization behavior between secure and intentionally vulnerable local API fixtures.
