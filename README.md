@@ -1,29 +1,123 @@
-# API Sentinel
+# API Sentinel v1.0.0
 
-**API Security Testing Toolkit for BOLA/IDOR Detection**
+**A Python-based API Security Testing Toolkit for Local Security Labs**
 
-API Sentinel is a Python-based toolkit for learning and testing API authorization security in a controlled local environment. It demonstrates Broken Object Level Authorization (BOLA), also known as IDOR, by comparing a secure mock API with an intentionally vulnerable lab API.
+API Sentinel is a Python-based security testing project designed to demonstrate API authorization testing, BOLA/IDOR detection, OpenAPI specification auditing, HTTP security checks, regression testing, and security report generation.
+
+The project uses intentionally configured local test fixtures to demonstrate authorization behavior in secure and vulnerable API scenarios.
+
+> **Scope:** This project is intended for authorized security testing and local laboratory environments. Results from a local fixture do not establish that a public or production API is vulnerable.
+
+## Table of Contents
+
+- [Features](#features)
+- [Project Structure](#project-structure)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Testing](#testing)
+- [Recorded Test Results](#recorded-test-results)
+- [Reports](#reports)
+- [Test Evidence](#test-evidence)
+- [Security Methodology](#security-methodology)
+- [Limitations](#limitations)
+- [Responsible Use](#responsible-use)
+- [Version](#version)
+- [Author](#author)
 
 ## Features
 
-- BOLA/IDOR testing against local mock APIs.
-- Comparison between secure and intentionally vulnerable authorization behavior.
-- Authentication-aware test scenarios.
-- OpenAPI specification auditing.
-- HTTP security checks restricted to localhost.
-- Regression testing.
-- JSON, Markdown, and HTML report generation.
-- Interactive command-line interface.
-- Evidence and report review workflow.
+### 1. BOLA / IDOR Scanner
+
+- Compares authorization behavior between secure and intentionally vulnerable local API fixtures.
+- Tests access to the authenticated user's own object.
+- Tests attempts to access another user's object.
+- Checks expected HTTP responses against actual responses.
+- Identifies unauthorized object access in the vulnerable fixture.
+
+### 2. OpenAPI Specification Audit
+
+- Audits the configured API specification.
+- Reports potential documentation issues detected by the implemented checks.
+- Helps identify areas that may require manual specification review.
+
+### 3. HTTP Security Checks
+
+- Sends HTTP requests to configured local test endpoints.
+- Records HTTP response status codes and content types.
+- Supports inspection of endpoint behavior in the test environment.
+- Helps document unexpected responses for further review.
+
+### 4. Auth-Aware BOLA Tests
+
+Tests authorization behavior using scenarios such as:
+
+- Authenticated user accessing their own order.
+- Authenticated user attempting to access another user's order.
+- Different authenticated user accessing their own order.
+- Unauthenticated request.
+- Invalid authentication token.
+- Request for a nonexistent order.
+
+### 5. Regression Testing
+
+- Checks implemented test scenarios and expected results.
+- Helps detect unexpected changes in the project's recorded test behavior.
+- Provides a repeatable command for running the available regression suite.
+
+### 6. Security Report Generation
+
+The project can generate reports in supported formats, including:
+
+- JSON
+- Markdown
+- HTML
+
+Generated reports depend on which tests and report-generation options have been executed.
+
+## Project Structure
+
+The following is an illustrative structure. Actual files may differ depending on the current repository contents and generated reports.
+
+```text
+api-sentinel/
+├── src/
+│   ├── cli.py
+│   ├── mock_api.py
+│   └── regression_test.py
+├── reports/
+│   ├── bola_comparison.json
+│   ├── security_report_v1.0.0.md
+│   ├── security_report_v1.0.0.html
+│   ├── http_check.json
+│   ├── auth_bola_report.json
+│   ├── auth_bola_report.md
+│   └── auth_bola_report.html
+├── docs/
+│   └── evidence/
+│       ├── README.md
+│       ├── regression-test-19-19.png
+│       ├── bola-idor-scanner.png
+│       ├── http-security-checks.png
+│       ├── http-security-checks1.png
+│       ├── security-report-html.png
+│       ├── security-report-html1.png
+│       └── security-report-html2.png
+├── requirements.txt
+└── README.md
+```
+
+Some report or evidence files may only appear after running the corresponding tests or copying screenshots into the repository.
 
 ## Requirements
 
-- Python 3.9 or later with support for the syntax used by the project.
-- Git.
-- Linux, macOS, or another environment that supports Python virtual environments.
-- Network access to install dependencies, unless they are already available locally.
+- Python 3
+- pip
+- Git
+- A terminal environment such as Kali Linux or another compatible Linux distribution
+- Dependencies listed in `requirements.txt`
 
-Use a Python version compatible with the project's dependencies and source code.
+The exact dependency versions are defined by the repository's requirements file.
 
 ## Installation
 
@@ -37,197 +131,181 @@ cd api-sentinel
 Create and activate a virtual environment:
 
 ```bash
-python3 -m venv .venv
+python -m venv .venv
 source .venv/bin/activate
 ```
 
-Install the dependencies:
+Install dependencies:
 
 ```bash
-python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
-
-On Windows, activate the environment with:
-
-```powershell
-.venv\Scripts\Activate.ps1
 ```
 
 ## Usage
 
-Start the interactive CLI:
+Launch the command-line interface:
 
 ```bash
 python src/cli.py
 ```
 
-The CLI provides the following options:
+The recorded CLI menu includes the following options:
 
-1. **BOLA / IDOR Scanner (local lab)** — starts the local secure and vulnerable fixtures, runs the BOLA tests and regression tests, and generates reports.
-2. **OpenAPI Specification Audit** — audits the example OpenAPI specification.
-3. **HTTP Security Checks (localhost only)** — runs HTTP checks against an accepted localhost URL.
-4. **View Reports** — displays available report files.
-5. **Generate HTML and Markdown Reports** — generates report outputs.
-6. **Exit** — exits the application.
-7. **Auth-Aware BOLA Tests** — runs the authentication-aware BOLA test module.
-8. **Generate Auth-Aware BOLA Reports** — generates reports for authentication-aware tests.
+1. BOLA / IDOR Scanner (local lab)
+2. OpenAPI Specification Audit
+3. HTTP Security Checks (localhost only)
+4. View Reports
+5. Generate HTML and Markdown Reports
+6. Exit
+7. Auth-Aware BOLA Tests
+8. Generate Auth-Aware BOLA Reports
 
-Menu options may depend on the version of the repository you are using.
+Choose the appropriate menu option and follow the prompts.
 
-## Local Testing Environment
-
-API Sentinel provides two mock API fixtures for local authorization testing.
-
-| Fixture | Address | Purpose |
-|---|---|---|
-| `src/mock_api.py` | `http://127.0.0.1:8000` | Secure API fixture that checks order ownership |
-| `src/mock_api_vulnerable_lab.py` | `http://127.0.0.1:8001` | Intentionally vulnerable fixture that does not check order ownership |
-
-Both fixtures bind to the loopback interface (`127.0.0.1`) and are intended for local testing.
-
-### Run the Integrated BOLA Lab
-
-1. Activate the project's virtual environment.
-2. Ensure ports `8000` and `8001` are available.
-3. Start the CLI:
-
-   ```bash
-   python src/cli.py
-   ```
-
-4. Select option `1`, **BOLA / IDOR Scanner (local lab)**.
-5. Let the CLI start the fixtures and run the tests.
-6. Review the output and generated files in `reports/`.
-
-The CLI checks whether the required ports are available before starting the fixtures. It starts both local APIs, runs `bola_test.py`, then runs `regression_test.py`. If the workflow finishes or is interrupted, the CLI attempts to stop the fixture processes it started.
-
-Do not start separate fixture processes on ports `8000` or `8001` before using this integrated workflow.
-
-### How the Lab Demonstrates BOLA
-
-The lab contains two sample orders:
-
-- Order `1001` belongs to Alice.
-- Order `1002` belongs to Bob.
-
-The fixtures use the following example bearer tokens:
-
-- `alice-token`
-- `bob-token`
-
-The secure fixture checks whether the authenticated user owns the requested order. An attempt by Alice to access Bob's order should be denied.
-
-The vulnerable fixture authenticates the user but does not check order ownership. This intentionally demonstrates how an authenticated user may access another user's order by changing the object identifier.
-
-These tokens and records are test data for the local lab only. They are not real credentials.
-
-## Running Tests Separately
-
-Run the regression test suite:
+### Running Regression Tests
 
 ```bash
 python src/regression_test.py
 ```
 
-Run the authentication-aware BOLA test module:
+### Running Local BOLA / IDOR Tests
 
-```bash
-python src/auth_bola_test.py
-```
+Select option 1 in the CLI.
 
-Generate authentication-aware reports:
+The scanner starts or uses the configured local fixtures, compares authorization responses, and generates the corresponding comparison report when execution completes successfully.
 
-```bash
-python src/auth_report.py
-```
+Make sure the required local ports are available before running the scanner.
 
-Run these commands from the repository root with the virtual environment activated.
+### Running the OpenAPI Audit
 
-**Important:** The integrated CLI workflow is the recommended starting point for the BOLA lab. Before running a test module independently, inspect its implementation to confirm whether it starts its own fixtures or requires the local APIs to be running.
+Select option 2 in the CLI.
 
-## HTTP Security Checks
+Review the output and inspect the generated or configured specification as needed.
 
-Select option `3` in the CLI to run HTTP security checks.
+### Running HTTP Security Checks
 
-The CLI is designed to accept HTTP URLs on `localhost` or `127.0.0.1`, for example:
+Select option 3 in the CLI.
 
-```text
-http://127.0.0.1:8000
-```
+Run this option only against the configured local test service. Ensure that the service is running before starting the checks.
 
-Public domains, HTTPS URLs, and non-local network addresses are not accepted by this CLI option.
+### Running Auth-Aware BOLA Tests
 
-## OpenAPI Specification Audit
+Select option 7 in the CLI.
 
-Select option `2` to audit the example specification:
+Review the output to verify the expected behavior of authentication and object-ownership scenarios.
 
-```text
-examples/openapi.yaml
-```
+### Generating Reports
 
-The specification audit checks the documented API definition. A finding in an OpenAPI specification is not, by itself, proof that a live API endpoint is vulnerable.
+Use options 4, 5, and 8 to view available reports or generate the supported HTML, Markdown, and authentication-aware BOLA reports.
 
-## Reports and Evidence
+## Recorded Test Results
 
-Generated reports and lab logs are stored in the `reports/` directory. Depending on the modules executed, files may include:
+The following results were recorded during previous local test runs for this project.
 
-- `bola_comparison.json`
-- `secure_lab.log`
-- `vulnerable_lab.log`
-- Markdown reports
-- HTML reports
-- Authentication-aware test reports
+| Test | Recorded result |
+|---|---|
+| Regression suite | 19/19 checks passed |
+| Auth-aware BOLA tests | 6/6 scenarios passed |
+| OpenAPI specification audit | 0 potential documentation issues reported |
+| Secure local fixture | Unauthorized cross-user order access was rejected |
+| Vulnerable local fixture | Cross-user order access was detected |
 
-The CLI's report center can display available report files. HTML reports can be opened in a browser using the local file path shown by the application.
+### BOLA / IDOR Demonstration
 
-Report filenames and generated artifacts may vary depending on the modules executed and the repository version.
+The recorded local comparison detected a case in which Alice could read Bob's order in the intentionally vulnerable fixture.
 
-## Project Structure
+- Endpoint: `GET /orders/1002`
+- Object ID: `1002`
+- Expected response for unauthorized access: `403 Forbidden`
+- Actual response in the vulnerable fixture: `200 OK`
+- Recorded result: `FINDING`
 
-```text
-api-sentinel/
-├── .github/
-│   └── workflows/
-├── examples/
-│   └── openapi.yaml
-├── reports/
-├── src/
-│   ├── auth_bola_test.py
-│   ├── auth_report.py
-│   ├── bola_test.py
-│   ├── cli.py
-│   ├── http_checker.py
-│   ├── markdown_report.py
-│   ├── mock_api.py
-│   ├── mock_api_vulnerable_lab.py
-│   ├── regression_test.py
-│   └── spec_audit.py
-├── .gitignore
-├── README.md
-└── requirements.txt
-```
+The secure fixture rejected the unauthorized request, while the vulnerable fixture demonstrated the authorization failure intentionally configured for the lab.
 
-This is a high-level overview. The repository may contain additional files or directories.
+These results describe the recorded test runs. They do not prove that all project components are secure or that any external service has the same vulnerability.
 
-## Testing Scope and Limitations
+## Reports
 
-API Sentinel is an educational and testing toolkit, not a guarantee that an API is secure.
+The recorded test workflow produced or referenced reports including:
 
-- Results depend on the test scenarios, configuration, and code being tested.
-- The local mock APIs are simplified fixtures and do not represent every real-world API architecture.
-- OpenAPI specification findings do not automatically establish runtime vulnerabilities.
-- A passing regression suite does not prove that all security issues have been eliminated.
-- Generated reports should be reviewed before being used as formal security evidence.
+- `reports/bola_comparison.json`
+- `reports/security_report_v1.0.0.md`
+- `reports/security_report_v1.0.0.html`
+- `reports/http_check.json`
+- `reports/auth_bola_report.json`
+- `reports/auth_bola_report.md`
+- `reports/auth_bola_report.html`
+
+Report availability depends on the tests executed and the current contents of the `reports/` directory.
+
+Review reports before sharing them publicly. Remove credentials, tokens, personal data, internal addresses, or other sensitive information if present.
+
+## Test Evidence
+
+Screenshots from local security testing are stored in [`docs/evidence/`](docs/evidence/).
+
+See the [evidence index](docs/evidence/README.md) for descriptions of the screenshots and the scope of the demonstrations.
+
+Expected evidence filenames include:
+
+- `regression-test-19-19.png`
+- `bola-idor-scanner.png`
+- `http-security-checks.png`
+- `http-security-checks1.png`
+- `security-report-html.png`
+- `security-report-html1.png`
+- `security-report-html2.png`
+
+Only files that actually exist in the repository will be displayed on GitHub. Additional screenshots can document different sections of a long terminal output or report.
+
+## Security Methodology
+
+API Sentinel demonstrates several practical API security testing concepts.
+
+### Object-Level Authorization
+
+Changing an object identifier must not grant access to another user's data. The API must validate authorization on the server side for every protected object.
+
+### Authentication Handling
+
+Requests without valid authentication should receive an appropriate rejection when authentication is required.
+
+### Expected Versus Actual Responses
+
+The scanner compares expected status codes with actual responses to identify potentially unexpected authorization behavior.
+
+### Manual Validation
+
+Automated findings should be reviewed manually in the authorized test environment before being treated as confirmed vulnerabilities.
+
+## Limitations
+
+- Tests cover only the implemented scenarios and configured test environment.
+- Regression tests do not establish that the complete application is free of defects.
+- An OpenAPI audit reporting zero potential documentation issues does not prove that the API implementation is secure.
+- HTTP status codes alone cannot establish the absence of vulnerabilities.
+- Automated tools can produce false positives and false negatives.
+- CVSS scores require a separate, documented risk assessment; no score is claimed here.
+- Local fixture results must not be represented as findings against a real production target.
 
 ## Responsible Use
 
 Use API Sentinel only against systems you own or have explicit authorization to test.
 
-Keep the intentionally vulnerable fixture isolated to the local testing environment. Do not expose it to a public network or deploy it as a production service.
+- Keep testing within the agreed scope.
+- Prefer local fixtures and designated staging environments.
+- Avoid accessing, modifying, or disclosing other users' data.
+- Preserve relevant evidence and document test conditions.
+- Report verified findings through the system owner's approved security reporting process.
 
-Do not use this project as authorization to test third-party systems.
+## Version
 
-## Disclaimer
+**Current documented version:** v1.0.0
 
-The author provides this project for educational, defensive security testing, and authorized assessment purposes. Users are responsible for complying with applicable laws, rules, and authorization requirements.
+This README documents the project's recorded capabilities and test results. Confirm repository files and test outputs before publishing a release or making claims about current functionality.
+
+## Author
+
+Developed as a cybersecurity portfolio project focused on API security testing, BOLA/IDOR demonstrations, authorization validation, and security reporting.
+
+Repository: [draxbae/api-sentinel](https://github.com/draxbae/api-sentinel)
