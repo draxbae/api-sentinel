@@ -105,7 +105,8 @@ api-sentinel/
 ├── src/
 │   ├── cli.py
 │   ├── mock_api.py
-│   └── regression_test.py
+│   ├── regression_test.py
+│   └── runtime_api_scanner.py
 ├── reports/
 │   ├── bola_comparison.json
 │   ├── security_report_v1.0.0.md
@@ -180,6 +181,7 @@ The recorded CLI menu includes the following options:
 6. Exit
 7. Auth-Aware BOLA Tests
 8. Generate Auth-Aware BOLA Reports
+9. Runtime API Scanner (read-only)
 
 Choose the appropriate menu option and follow the prompts.
 
