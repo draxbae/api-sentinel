@@ -1,4 +1,6 @@
 
+import argparse
+
 from openapi_parser import load_openapi, map_endpoints
 
 
@@ -12,8 +14,7 @@ def audit_spec(document: dict) -> list[dict]:
         operation = next(
             (
                 details
-                for candidate_path, path_item
-                in document.get("paths", {}).items()
+                for candidate_path, path_item in document.get("paths", {}).items()
                 if candidate_path == path
                 for candidate_method, details in path_item.items()
                 if candidate_method.upper() == method
@@ -28,10 +29,7 @@ def audit_spec(document: dict) -> list[dict]:
                 "issue": "No documented responses",
             })
 
-        if (
-            "security" not in operation
-            and "security" not in document
-        ):
+        if "security" not in operation and "security" not in document:
             findings.append({
                 "severity": "REVIEW",
                 "endpoint": f"{method} {path}",
@@ -41,11 +39,26 @@ def audit_spec(document: dict) -> list[dict]:
     return findings
 
 
-if __name__ == "__main__":
-    spec = load_openapi("examples/openapi.yaml")
-    findings = audit_spec(spec)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Audit an OpenAPI 3.x specification."
+    )
+    parser.add_argument(
+        "spec_path",
+        nargs="?",
+        default="examples/openapi.yaml",
+        help="Path to an OpenAPI JSON/YAML file",
+    )
+    args = parser.parse_args()
+
+    try:
+        spec = load_openapi(args.spec_path)
+        findings = audit_spec(spec)
+    except (OSError, ValueError) as exc:
+        parser.error(str(exc))
 
     print("=== API SENTINEL SPEC AUDIT ===")
+    print(f"Specification: {args.spec_path}")
     print(f"Potential documentation issues: {len(findings)}")
 
     for finding in findings:
@@ -53,3 +66,7 @@ if __name__ == "__main__":
             f"[{finding['severity']}] "
             f"{finding['endpoint']} - {finding['issue']}"
         )
+
+
+if __name__ == "__main__":
+    main()

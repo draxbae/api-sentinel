@@ -168,6 +168,7 @@ def show_menu():
 # ============================================================
 # 1. BOLA / IDOR LOCAL LAB
 # ============================================================
+    print("  [9] Runtime API Scanner (read-only)")
 
 def bola_lab():
     heading("BOLA / IDOR SCANNER — LOCAL LAB")
@@ -326,24 +327,43 @@ def bola_lab():
 def spec_audit():
     heading("OPENAPI SPECIFICATION AUDIT")
 
-    spec_path = ROOT / "examples" / "openapi.yaml"
+    default_spec = ROOT / "examples" / "openapi.yaml"
+
+    print("  Kosongkan input untuk memakai spesifikasi contoh.")
+    print("  Masukkan path file JSON/YAML untuk spesifikasi eksternal.")
+    print("  Contoh: targets/petstore-openapi.json")
+    print()
+
+    user_path = input(
+        "  Path OpenAPI [examples/openapi.yaml]: "
+    ).strip()
+
+    spec_path = (
+        Path(user_path).expanduser()
+        if user_path
+        else default_spec
+    )
+
+    if not spec_path.is_absolute():
+        spec_path = ROOT / spec_path
 
     if not spec_path.is_file():
         print_status(
             "ERROR",
-            f"Spec tidak ditemukan: {spec_path.relative_to(ROOT)}",
+            f"Spec tidak ditemukan: {spec_path}",
             RED,
         )
         return
 
-    print_status("INFO", "Memeriksa dokumentasi OpenAPI contoh.", CYAN)
+    print_status("INFO", f"Mengaudit: {spec_path}", CYAN)
     print_status(
         "NOTE",
-        "Hasil audit spesifikasi bukan bukti bahwa endpoint runtime rentan.",
+        "Audit memeriksa dokumentasi, bukan membuktikan keamanan runtime.",
         YELLOW,
     )
 
-    run_script("spec_audit.py")
+    run_script("spec_audit.py", [str(spec_path)])
+
 
 
 # ============================================================
@@ -570,6 +590,67 @@ def auth_bola_report():
         print_status("ERROR", "Generator laporan gagal. Periksa pesan di atas.", RED)
 
 
+
+
+# ============================================================
+# 9. RUNTIME API SCANNER — EXPLICIT TARGET
+# ============================================================
+
+def runtime_api_scan():
+    heading("RUNTIME API SCANNER")
+
+    spec_path = input(
+        "  Path OpenAPI [targets/petstore-openapi.json]: "
+    ).strip() or "targets/petstore-openapi.json"
+
+    origin = input(
+        "  Origin target yang diizinkan "
+        "[https://petstore3.swagger.io]: "
+    ).strip() or "https://petstore3.swagger.io"
+
+    spec = Path(spec_path).expanduser()
+    if not spec.is_absolute():
+        spec = ROOT / spec
+
+    if not spec.is_file():
+        print_status("ERROR", f"Spec tidak ditemukan: {spec}", RED)
+        return
+
+    from urllib.parse import urlsplit
+
+    try:
+        parsed = urlsplit(origin)
+        if (
+            parsed.scheme not in {"http", "https"}
+            or not parsed.hostname
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.path not in {"", "/"}
+            or parsed.query
+            or parsed.fragment
+        ):
+            raise ValueError("Gunakan origin HTTP(S) tanpa path.")
+        _ = parsed.port
+    except ValueError as exc:
+        print_status("ERROR", f"Origin tidak valid: {exc}", RED)
+        return
+
+    print_status(
+        "NOTE",
+        "Lanjutkan hanya jika kamu berwenang menguji target ini.",
+        YELLOW,
+    )
+    confirm = input("  Ketik SCAN untuk menjalankan GET/HEAD terbatas: ")
+    if confirm != "SCAN":
+        print_status("INFO", "Scan dibatalkan.", YELLOW)
+        return
+
+    run_script(
+        "runtime_api_scanner.py",
+        [str(spec), "--origin", origin],
+    )
+
+
 # MAIN LOOP
 # ============================================================
 
@@ -614,10 +695,14 @@ def main():
                 auth_bola_report()
                 pause()
 
+            elif choice == "9":
+                runtime_api_scan()
+                pause()
+
             else:
                 print_status(
                     "ERROR",
-                    "Pilihan tidak dikenal. Pilih angka 1 sampai 8.",
+                    "Pilihan tidak dikenal. Pilih angka 1 sampai 9.",
                     RED,
                 )
                 time.sleep(1)

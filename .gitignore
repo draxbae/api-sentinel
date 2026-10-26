@@ -24,3 +24,5 @@ Thumbs.db
 *.log
 *.tmp
 backups/
+/targets/
+/reports/runtime_api_scan.json
